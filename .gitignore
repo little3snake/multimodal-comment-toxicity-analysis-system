@@ -39,3 +39,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+backend/.venv/
+
+# IDE
+.idea/
+.vscode/
+
+# Next.js
+frontend/.next/
+frontend/node_modules/
+
+# AI model
+backend/app/models/

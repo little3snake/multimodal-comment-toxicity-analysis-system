@@ -66,9 +66,15 @@ export default function TextMainSection() {
                 comment={result.comment}
             />
 
-            <div  className="h-fit gap-[10px] px-[10px] py-[10px] bg-white-custom flex justify-center">
-                <AppButton variant="checkAnother">
-                    Проверить другой текст
+            <div className="h-fit gap-[10px] px-[10px] py-[10px] bg-white-custom flex justify-center">
+              <AppButton
+                variant="checkAnother"
+                onClick={() => {
+                  setStatus("idle");
+                  setResult(null);
+                }}
+                >
+                Проверить другой текст
                 </AppButton>
             </div>
 

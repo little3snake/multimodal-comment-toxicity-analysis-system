@@ -19,7 +19,7 @@ export default function TextInputSection({
 
   const isFilled = text.trim().length > 0;
 
-  function handleCheck() {
+  async function handleCheck() {
     if (!isFilled || status === "loading") return;
 
     setStatus("loading");
@@ -34,9 +34,33 @@ export default function TextInputSection({
 
       setStatus("result");
     }, 2000);*/
-    setTimeout(() => {
+    /*setTimeout(() => {
       setStatus("analysisError");
      }, 2000);
+     setStatus("loading");*/
+
+    try {
+      const response = await fetch("http://localhost:8000/analyze/text", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Text analysis failed");
+      }
+
+      const data = await response.json();
+
+      setResult(data);
+      setStatus("result");
+    } catch (error) {
+      setStatus("analysisError");
+    }
 
   }
 
