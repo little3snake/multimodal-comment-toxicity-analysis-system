@@ -11,5 +11,6 @@ Coursework project: multimodal system for toxicity analysis of internet comments
 ## Run project
 
 ```bash
+cd frontend
 npm install
 npm run dev
