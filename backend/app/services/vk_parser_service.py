@@ -65,8 +65,10 @@ def analyze_comment(
     # Пока анализируем только текст.
     # Позже сюда добавим анализ изображения:
     # image_toxicity = analyze_image_url(image_url)
-    toxicity = toxicity_model_repository.predict_toxicity(text) if text else 0
-    offense = toxicity > 75
+    result = toxicity_model_repository.analyze(text)
+
+    toxicity = result["toxicity_percent"]
+    offense = result["has_insult"]
 
     return ParsedComment(
         comment_id=comment["id"],
@@ -133,12 +135,14 @@ def analyze_vk_post(url: str) -> PostAnalysisResponse:
                 )
             )
 
-    toxic_comments = sum(1 for comment in comments if comment.offense)
+    offense_comments = sum(1 for comment in comments if comment.offense)
+    toxic_comments = sum(1 for comment in comments if comment.toxicity >= 70)
 
     return PostAnalysisResponse(
         source="vk",
         post_url=url,
         total_comments=len(comments),
+        offense_comments=offense_comments,
         toxic_comments=toxic_comments,
         comments=comments,
     )

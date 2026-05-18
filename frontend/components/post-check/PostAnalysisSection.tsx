@@ -60,7 +60,7 @@ export default function PostAnalysisSection({ variant, items }: Props) {
     },
     {
       icon: "/analysis cards icons/card offense.png",
-      title: "Оскорбление",
+      title: "Оскорбительных",
     },
     {
       icon: "/analysis cards icons/card toxicity.png",

@@ -21,5 +21,6 @@ class PostAnalysisResponse(BaseModel):
     source: str
     post_url: str
     total_comments: int
+    offense_comments: int
     toxic_comments: int
     comments: list[ParsedComment]

@@ -69,7 +69,10 @@ def build_comment(
     is_reply: bool,
     reply_to_comment: str | None,
 ) -> ParsedComment:
-    toxicity = toxicity_model_repository.predict_toxicity(text)
+    result = toxicity_model_repository.analyze(text)
+
+    toxicity = result["toxicity_percent"]
+    offense = result["has_insult"]
 
     return ParsedComment(
         comment_id=comment_id,
@@ -80,7 +83,7 @@ def build_comment(
         is_reply=is_reply,
         reply_to_comment=reply_to_comment,
         toxicity=toxicity,
-        offense=toxicity > 75,
+        offense=offense,
     )
 
 
@@ -173,12 +176,14 @@ def analyze_youtube_video(url: str) -> PostAnalysisResponse:
 
         time.sleep(PAGE_DELAY_SECONDS)
 
-    toxic_comments = sum(1 for comment in comments if comment.offense)
+    offense_comments = sum(1 for comment in comments if comment.offense)
+    toxic_comments = sum(1 for comment in comments if comment.toxicity >= 70)
 
     return PostAnalysisResponse(
         source="youtube",
         post_url=url,
         total_comments=len(comments),
+        offense_comments=offense_comments,
         toxic_comments=toxic_comments,
         comments=comments,
     )

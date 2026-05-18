@@ -163,7 +163,7 @@ export default function PostCommentsSection({
                 <div className="min-h-[84px] relative pl-[16px] pr-[16px] py-[10px]">
                   <div
                     className={`absolute left-0 top-0 bottom-0 w-[8px] rounded-l-full ${
-                      comment.toxicity >= 75 ? "bg-toxic" : "bg-good"
+                      comment.toxicity >= 70 ? "bg-toxic" : "bg-good"
                     }`}
                   />
 

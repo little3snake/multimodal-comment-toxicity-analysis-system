@@ -71,12 +71,14 @@ export default function PostInputSection({
 
       const totalComments = data.total_comments;
       const toxicCount = data.toxic_comments;
+      const offenseCount = data.offense_comments;
+
       const toxicPercent =
         totalComments > 0 ? Math.round((toxicCount / totalComments) * 100) : 0;
 
       setResult({
         totalComments,
-        offenseCount: toxicCount,
+        offenseCount,
         toxicCount,
         toxicPercent,
         comments: data.comments,

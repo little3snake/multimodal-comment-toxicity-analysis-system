@@ -37,14 +37,11 @@ async def analyze_image(file: UploadFile) -> ImageAnalysisResponse:
                 detail="Не удалось распознать текст на изображении.",
             )
 
-        toxicity = toxicity_model_repository.predict_toxicity(extracted_text)
-        offense = toxicity > 75
+        result = toxicity_model_repository.analyze(extracted_text)
 
-        comment = (
-            "На изображении обнаружен потенциально токсичный текст."
-            if toxicity > 50
-            else "Токсичный текст на изображении не обнаружен."
-        )
+        toxicity = result["toxicity_percent"]
+        offense = result["has_insult"]
+        comment = result["comment"]
 
         return ImageAnalysisResponse(
             toxicity=toxicity,
