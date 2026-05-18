@@ -56,3 +56,7 @@ frontend/node_modules/
 
 # AI model
 backend/app/models/
+
+#heavy-weight models
+backend/app/models/image_toxicity/*.safetensors
+backend/app/models/image_toxicity/*.pth
