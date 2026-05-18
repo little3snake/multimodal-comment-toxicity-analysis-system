@@ -16,7 +16,7 @@ export default function PostInfoSection() {
       rightText={
         <>
           Поддерживаемые источники:{" "}
-          <span className="text-primary">VK и Reddit</span>
+          <span className="text-primary">VK и YouTube</span>
           <br />
           <br />
           Требования:

@@ -18,17 +18,32 @@ export type PostStatus =
   | "result"
   | "analysisError";
 
+export type PostComment = {
+  comment_id: number | string;
+  author_id: number | string;
+  date: string;
+  text: string;
+  image_urls: string[];
+  is_reply: boolean;
+  reply_to_comment: number | string | null;
+  toxicity: number;
+  offense: boolean;
+};  
+
 export type PostResult = {
   totalComments: number;
   offenseCount: number;
   toxicCount: number;
   toxicPercent: number;
+  comments: PostComment[];
 };
 
 export default function PostMainSection() {
   const [status, setStatus] = useState<PostStatus>("idle");
 
   const [result, setResult] = useState<PostResult | null>(null);
+
+  const [url, setUrl] = useState("");
 
   return (
     <section className="bg-white-custom flex justify-center">
@@ -38,6 +53,8 @@ export default function PostMainSection() {
           status={status}
           setStatus={setStatus}
           setResult={setResult}
+          url={url}
+          setUrl={setUrl}
         />
 
         {status === "loading" && (
@@ -75,12 +92,15 @@ export default function PostMainSection() {
                     icon: "/analysis cards icons/toxic percent.png",
                     title: "Доля токсичных",
                     value: `${result.toxicPercent}%`,
-                    danger: result.toxicPercent > 50,
+                    danger: result.toxicPercent > 75,
                     },
                 ]}
                 />
 
-                <PostCommentsSection variant="result" />
+                <PostCommentsSection
+                    variant="result"
+                    comments={result.comments}
+                />
 
                 <div className="h-fit gap-[10px] px-[10px] py-[10px] bg-white-custom flex justify-center">
                     <AppButton
@@ -88,6 +108,7 @@ export default function PostMainSection() {
                         onClick={() => {
                             setStatus("idle");
                             setResult(null);
+                            setUrl("");
                         }}
                     >
                     Проверить другой пост

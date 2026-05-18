@@ -31,13 +31,13 @@ export default function ImageUploadSection({ status, setStatus, setResult}: Prop
     setStatus("uploaded");
   }
 
-  function handleCheck() {
+  async function handleCheck() {
     setStatus("loading");
 
     // временно, пока нет бэкенда
     // потом здесь будет запрос на сервер
     // Потом setTimeout заменить на fetch
-    setTimeout(() => {
+    /*setTimeout(() => {
       setResult({
         toxicity: 72,
         offense: false,
@@ -46,10 +46,40 @@ export default function ImageUploadSection({ status, setStatus, setResult}: Prop
       });
 
       setStatus("result");
-    }, 2000);
+    }, 2000);*/
     /*setTimeout(() => {
       setStatus("analysisError");
     }, 2000);*/
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(
+        "http://127.0.0.1:8000/analyze/image",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Ошибка анализа");
+      }
+
+      const data = await response.json();
+
+      setResult({
+        toxicity: data.toxicity,
+        offense: data.offense,
+        comment: data.comment,
+      });
+
+      setStatus("result");
+    } catch (error) {
+      console.error(error);
+      setStatus("analysisError");
+    }
   }
     
 

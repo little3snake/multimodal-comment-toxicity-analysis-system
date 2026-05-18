@@ -5,7 +5,7 @@ from app.schemas.text_schema import TextAnalysisResponse
 def analyze_text(text: str) -> TextAnalysisResponse:
     toxicity = toxicity_model_repository.predict_toxicity(text)
 
-    offense = toxicity > 50
+    offense = toxicity > 75
 
     if toxicity > 50:
         comment = "Текст имеет признаки токсичности."

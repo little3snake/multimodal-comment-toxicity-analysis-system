@@ -8,18 +8,22 @@ type Props = {
   status: PostStatus;
   setStatus: (status: PostStatus) => void;
   setResult: (result: PostResult) => void;
+  url: string;
+  setUrl: (url: string) => void;
 };
 
 export default function PostInputSection({
   status,
   setStatus,
   setResult,
+  url,
+  setUrl
 }: Props) {
-  const [url, setUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const isFilled = url.trim().length > 0;
   const isError = status === "error";
+  
 
   function handleClear() {
     setUrl("");
@@ -27,22 +31,65 @@ export default function PostInputSection({
     setErrorMessage("");
   }
 
-  function handleCheck() {
+  async function handleCheck() {
     if (!isFilled || status === "loading") return;
 
-    const isValid = url.includes("vk.com") || url.includes("reddit.com");
+    const trimmedUrl = url.trim();
+
+    const isValid =
+      trimmedUrl.includes("vk.com/wall") ||
+      trimmedUrl.includes("youtube.com/watch") ||
+      trimmedUrl.includes("youtu.be/") ||
+      trimmedUrl.includes("youtube.com/shorts");
 
     if (!isValid) {
       setStatus("error");
       setErrorMessage(
-        "Ссылка должна вести на пост VK или Reddit с открытыми комментариями"
+        "Ссылка должна вести на пост VK или YouTube с открытыми комментариями"
       );
       return;
     }
 
     setStatus("loading");
 
-    setTimeout(() => {
+    try {
+      const response = await fetch("http://localhost:8000/analyze/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: trimmedUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Post analysis failed");
+      }
+
+      const data = await response.json();
+
+      const totalComments = data.total_comments;
+      const toxicCount = data.toxic_comments;
+      const toxicPercent =
+        totalComments > 0 ? Math.round((toxicCount / totalComments) * 100) : 0;
+
+      setResult({
+        totalComments,
+        offenseCount: toxicCount,
+        toxicCount,
+        toxicPercent,
+        comments: data.comments,
+      });
+
+      setStatus("result");
+    } catch (error) {
+      console.error(error);
+      setStatus("analysisError");
+    }
+
+
+    /*setTimeout(() => {
       setResult({
         totalComments: 17,
         offenseCount: 5,
@@ -51,7 +98,7 @@ export default function PostInputSection({
       });
 
       setStatus("result");
-    }, 2000);
+    }, 2000);*/
 
     /*setTimeout(() => {
         setStatus("analysisError");
@@ -69,7 +116,7 @@ export default function PostInputSection({
 
         <div className="w-full h-fit min-h-[240px] px-[40px] pt-[20px] flex flex-col items-center gap-[40px]">
           <p className="w-fit h-[28px] text-[18px] leading-[28px] text-light-grey text-center">
-            Введите URL ссылку на пост из VK или Reddit
+            Введите URL ссылку на пост из VK или YouTube
           </p>
 
           <div className="w-full flex flex-col items-center gap-[10px]">
@@ -94,18 +141,18 @@ export default function PostInputSection({
                 }`}
               />
 
-              {isFilled && (
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  disabled={status === "loading" || status === "result"}
-                  className={`absolute right-[20px] top-[10px] w-[28px] h-[28px] text-[28px] leading-[28px] ${
-                    isError ? "text-toxic" : "text-light-grey"
-                  }`}
-                >
-                  ×
-                </button>
-              )}
+              
+              <button
+                type="button"
+                onClick={handleClear}
+                disabled={status === "loading" || status === "result"}
+                className={`absolute right-[20px] top-[10px] w-[28px] h-[28px] text-[28px] leading-[28px] ${
+                  isError ? "text-toxic" : "text-light-grey"
+                }`}
+              >
+                ×
+              </button>
+      
             </div>
 
             {isError && (

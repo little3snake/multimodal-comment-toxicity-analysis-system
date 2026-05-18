@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppButton from "@/components/ui/AppButton";
 import type { TextResult, TextStatus } from "./TextMainSection";
 
@@ -8,16 +8,27 @@ type Props = {
   status: TextStatus;
   setStatus: (status: TextStatus) => void;
   setResult: (result: TextResult) => void;
+  resetKey: number;
 };
 
 export default function TextInputSection({
   status,
   setStatus,
   setResult,
+  resetKey,
 }: Props) {
   const [text, setText] = useState("");
 
+  useEffect(() => {
+    setText("");
+  }, [resetKey]);
+
   const isFilled = text.trim().length > 0;
+
+  function handleClear() {
+    setText("");
+    setStatus("idle");
+  }
 
   async function handleCheck() {
     if (!isFilled || status === "loading") return;
@@ -82,15 +93,15 @@ export default function TextInputSection({
             <textarea
               value={text}
               onChange={(event) => setText(event.target.value)}
-              disabled={status === "loading" || status === "result" || status === "analysisError"}
+              disabled={status === "loading" || status === "result"}
               placeholder="текст"
               className="w-[705px] h-full bg-transparent resize-none outline-none text-[18px] leading-[28px] text-grey placeholder:text-grey-blue disabled:cursor-default"
             />
 
             <button
               type="button"
-              onClick={() => setText("")}
-              disabled={status === "loading" || status === "result" || status === "analysisError"}
+              onClick={handleClear}
+              disabled={status === "loading" || status === "result"}
               className="absolute right-[20px] top-[10px] w-[28px] h-[28px] text-light-grey text-[28px] leading-[28px] disabled:cursor-default"
             >
               ×

@@ -54,7 +54,7 @@ export default function ImageMainSection() {
                 icon: "/analysis cards icons/card toxicity.png",
                 title: "Токсичность",
                 value: `${result.toxicity} %`,
-                danger: result.toxicity > 50,
+                danger: result.toxicity > 75,
               },
               {
                 icon: "/analysis cards icons/card offense.png",

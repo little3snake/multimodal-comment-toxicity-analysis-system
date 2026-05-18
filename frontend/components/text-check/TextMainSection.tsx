@@ -15,9 +15,11 @@ export type TextResult = {
   comment: string;
 };
 
+
 export default function TextMainSection() {
   const [status, setStatus] = useState<TextStatus>("idle");
   const [result, setResult] = useState<TextResult | null>(null);
+  const [resetKey, setResetKey] = useState(0);
 
   return (
     <section className="bg-white-custom flex justify-center">
@@ -27,6 +29,7 @@ export default function TextMainSection() {
           status={status}
           setStatus={setStatus}
           setResult={setResult}
+          resetKey={resetKey}
         />
 
         {status === "loading" && (
@@ -54,7 +57,7 @@ export default function TextMainSection() {
                     icon: "/analysis cards icons/card toxicity.png",
                     title: "Токсичность",
                     value: `${result.toxicity} %`,
-                    danger: result.toxicity > 50,
+                    danger: result.toxicity > 75,
                 },
                 {
                     icon: "/analysis cards icons/card offense.png",
@@ -72,6 +75,7 @@ export default function TextMainSection() {
                 onClick={() => {
                   setStatus("idle");
                   setResult(null);
+                  setResetKey((prev) => prev + 1);
                 }}
                 >
                 Проверить другой текст
