@@ -45,12 +45,13 @@ export default function PostInputSection({
     if (!isValid) {
       setStatus("error");
       setErrorMessage(
-        "Ссылка должна вести на пост VK или YouTube с открытыми комментариями"
+        "Ссылка должна вести на существующий пост VK или YouTube с открытыми комментариями"
       );
       return;
     }
 
     setStatus("loading");
+    setErrorMessage("");
 
     try {
       const response = await fetch("http://localhost:8000/analyze/post", {
@@ -63,11 +64,16 @@ export default function PostInputSection({
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Post analysis failed");
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        setStatus("analysisError");
+        setErrorMessage(
+          data?.detail ||
+            "Не удалось загрузить комментарии. Убедитесь, что пост открыт и комментарии доступны."
+        );
+        return;
+      }
 
       const totalComments = data.total_comments;
       const toxicCount = data.toxic_comments;
@@ -85,26 +91,12 @@ export default function PostInputSection({
       });
 
       setStatus("result");
-    } catch (error) {
-      console.error(error);
+    } catch {
       setStatus("analysisError");
+      setErrorMessage(
+        "Не удалось подключиться к серверу. Проверьте, что backend запущен."
+      );
     }
-
-
-    /*setTimeout(() => {
-      setResult({
-        totalComments: 17,
-        offenseCount: 5,
-        toxicCount: 9,
-        toxicPercent: 52,
-      });
-
-      setStatus("result");
-    }, 2000);*/
-
-    /*setTimeout(() => {
-        setStatus("analysisError");
-    }, 2000);*/
   }
 
   return (

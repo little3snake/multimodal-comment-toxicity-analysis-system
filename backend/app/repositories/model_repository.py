@@ -56,6 +56,21 @@ class ToxicityModelRepository:
             "dickhead", "dumbass",
         ]
 
+        self.hard_profanity_patterns = [
+            r"\bебу\b",
+            r"\bебать\b",
+            r"\bебан\w*\b",
+            r"\bёбан\w*\b",
+            r"\bблять\b",
+            r"\bблядь\b",
+            r"\bхуй\w*\b",
+            r"\bпизд\w*\b",
+            r"\bпидор\w*\b",
+            r"\bсука\b",
+            r"\bтвою\s+маму\b",
+            r"\bтвою\s+мать\b",
+        ]
+
     def predict_toxicity(self, text: str) -> int:
         inputs = self.tokenizer(
             text,
@@ -104,6 +119,11 @@ class ToxicityModelRepository:
 
             if re.search(pattern, text_lower):
                 found_insults.append(word)
+
+        for pattern in self.hard_profanity_patterns:
+            if re.search(pattern, text_lower):
+                found_insults.append("грубая ненормативная лексика")
+                break
 
         return found_insults
 

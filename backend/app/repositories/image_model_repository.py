@@ -64,7 +64,7 @@ class ImageModelRepository:
 
         self.model.eval()
 
-    def predict_image(self, image_path: str, threshold: float = 0.5) -> dict:
+    def predict_image(self, image_path: str, threshold: float = 0.7) -> dict:
         image = Image.open(image_path).convert("RGB")
 
         inputs = self.processor(
